@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 unsigned long lastScrollMillis = 0;
-unsigned long scrollInterval = 120;
+unsigned long scrollInterval = 100;
 
 // 2-dimensional array of row pin numbers:
 const int row[8] = {
@@ -13,16 +13,72 @@ const int col[8] = {
   2, 3, 4, 5, 6, 7, 8, 9
 };
 
+#define nChars 6
+#define nRows  8
+#define nCols  8
+
 // 2-dimensional array of pixels:
-boolean pixels[8][8] = {
-  {0, 0, 0, 1, 1, 0, 0, 0},
-  {0, 0, 1, 0, 0, 1, 0, 0},
-  {0, 1, 0, 0, 0, 0, 1, 0},
-  {0, 1, 0, 0, 0, 0, 1, 0},
-  {0, 1, 1, 1, 1, 1, 1, 0},
-  {0, 1, 0, 0, 0, 0, 1, 0},
-  {0, 1, 0, 0, 0, 0, 1, 0},
-  {0, 1, 0, 0, 0, 0, 1, 0}
+boolean pixels[nChars][nRows][nCols] = {
+  { // A
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 1, 0, 0, 1, 0, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {0, 1, 1, 1, 1, 1, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0}
+  },
+  { // s
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0},
+    {0, 0, 0, 0, 0, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0}
+  },
+  { // h
+    {0, 1, 1, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 1, 1, 1, 0, 0},
+    {0, 1, 1, 0, 0, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {0, 1, 0, 0, 0, 0, 1, 0},
+    {1, 1, 1, 0, 0, 0, 1, 0}
+  },
+  { // i
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 1, 1, 1, 1, 0, 0}
+  },
+  { // k
+    {0, 1, 1, 1, 0, 0, 0, 0},
+    {0, 0, 1, 0, 0, 0, 0, 0},
+    {0, 0, 1, 0, 0, 1, 1, 0},
+    {0, 0, 1, 0, 1, 0, 0, 0},
+    {0, 0, 1, 1, 0, 0, 0, 0},
+    {0, 0, 1, 0, 1, 0, 0, 0},
+    {0, 0, 1, 0, 0, 1, 0, 0},
+    {0, 1, 1, 1, 0, 1, 1, 0}
+  },
+  { // .
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
+  }
 };
 
 // cursor position:
@@ -45,19 +101,23 @@ void setup() {
 }
 
 void loop() {
+  int maxCol = nCols * nChars;
+
   unsigned long currentMillis = millis();
   if (currentMillis - lastScrollMillis >= scrollInterval) {
     lastScrollMillis = currentMillis;
     x--;
-    if (x < 0) x += 12;
+    if (x < 0) x += maxCol;
   }
 
   for(int thisRow = 0; thisRow < 8; thisRow++){
     for (int thisCol = 0; thisCol < 8; thisCol++) {
       int tempCol = thisCol - x;
-      if (tempCol < 0) tempCol += 12;
-      if (tempCol < 0 || tempCol >= 8) continue;
-      int thisPixel = pixels[thisRow][tempCol];
+      if (tempCol < 0) tempCol += maxCol;
+      int tempChar = tempCol / nCols;
+      if (tempCol < 0 || tempCol >= maxCol) continue;
+      tempCol %= nCols;
+      int thisPixel = pixels[tempChar][thisRow][tempCol];
       thisPixel = (thisPixel == 0)? HIGH : LOW;
       digitalWrite(col[thisCol], thisPixel);
     }
