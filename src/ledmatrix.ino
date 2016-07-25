@@ -14,81 +14,18 @@ const int col[8] = {
   2, 3, 4, 5, 6, 7, 8, 9
 };
 
-char text[] = "Hello 123! ";
+char text[] = "Ashik uddin Ahmad * 1234567890 WWW";
 int textLength = 11;
 LEDMatrix ledMatrix;
 
 #define nChars 6
 #define nRows  8
 #define nCols  8
-
-// 2-dimensional array of pixels:
-boolean pixels[nChars][nRows][nCols] = {
-  { // A
-    {0, 0, 0, 1, 1, 0, 0, 0},
-    {0, 0, 1, 0, 0, 1, 0, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 1, 1, 1, 1, 1, 0},
-    {0, 1, 1, 1, 1, 1, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0}
-  },
-  { // Y
-    {1, 1, 1, 0, 0, 1, 1, 1},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 0, 1, 1, 1, 1, 0, 0},
-    {0, 0, 0, 1, 1, 0, 0, 0},
-    {0, 0, 0, 1, 1, 0, 0, 0},
-    {0, 0, 1, 1, 1, 1, 0, 0}
-  },
-  { // A
-    {0, 0, 0, 1, 1, 0, 0, 0},
-    {0, 0, 1, 0, 0, 1, 0, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 1, 1, 1, 1, 1, 0},
-    {0, 1, 1, 1, 1, 1, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0}
-  },
-  { // A
-    {0, 0, 0, 1, 1, 0, 0, 0},
-    {0, 0, 1, 0, 0, 1, 0, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 1, 1, 1, 1, 1, 0},
-    {0, 1, 1, 1, 1, 1, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0}
-  },
-  { // N
-    {0, 1, 0, 0, 0, 0, 1, 1},
-    {0, 1, 1, 0, 0, 0, 1, 0},
-    {0, 1, 1, 1, 0, 0, 1, 0},
-    {0, 1, 0, 1, 1, 0, 1, 0},
-    {0, 1, 0, 0, 1, 1, 1, 0},
-    {0, 1, 0, 0, 0, 1, 1, 0},
-    {0, 1, 0, 0, 0, 0, 1, 0},
-    {1, 1, 0, 0, 0, 0, 1, 0}
-  },
-  { // .
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 1, 1, 0, 0, 0},
-    {0, 0, 0, 1, 1, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0}
-  }
-};
+#define charW  6
+#define charOffset 2
 
 // cursor position:
 int x = 0;
-int y = 5;
 
 void setup() {
   // initialize the I/O pins as outputs
@@ -104,11 +41,11 @@ void setup() {
   }
 
   ledMatrix = LEDMatrix();
-
+  Serial.begin(9600);
 }
 
 void loop() {
-  int maxCol = nCols * textLength;
+  int maxCol = charW * sizeof(text);
 
   unsigned long currentMillis = millis();
   if (currentMillis - lastScrollMillis >= scrollInterval) {
@@ -121,11 +58,11 @@ void loop() {
     for (int thisCol = 0; thisCol < 8; thisCol++) {
       int tempCol = thisCol - x;
       if (tempCol < 0) tempCol += maxCol;
-      int tempChar = tempCol / nCols;
+      int tempChar = tempCol / charW;//nCols;
       char c = text[tempChar];
       if (tempCol < 0 || tempCol >= maxCol) continue;
-      tempCol %= nCols;
-      int thisPixel = ledMatrix.getBit(c, thisRow, tempCol); //pixels[tempChar][thisRow][tempCol];
+      tempCol %= charW;//nCols;
+      bool thisPixel = ledMatrix.getBit(c, thisRow, charOffset+tempCol); //pixels[tempChar][thisRow][tempCol];
       thisPixel = (thisPixel == 0)? HIGH : LOW;
       digitalWrite(col[thisCol], thisPixel);
     }

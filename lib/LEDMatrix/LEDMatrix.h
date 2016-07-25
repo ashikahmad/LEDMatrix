@@ -6,6 +6,7 @@ public:
   LEDMatrix();
 
   bool getBit(char c, int row, int col);
+  int getCol(char c, int row);
 
 private:
 

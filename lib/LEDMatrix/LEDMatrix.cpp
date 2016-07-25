@@ -1,8 +1,8 @@
 #include <LEDMatrix.h>
 #include <Arduino.h>
 
-static const byte charset[][8] = {
-    {
+static const char charset[][8] = {
+    {   // Space
       0x00,
       0x00,
       0x00,
@@ -958,14 +958,21 @@ LEDMatrix::LEDMatrix() {
 
 }
 
-bool LEDMatrix::getBit(char c, int row, int col) {
+int LEDMatrix::getCol(char c, int row) {
   if (c >= ' ' && c <= '~') {
-    int index = c - '0';
+    int index = c - ' ';
     int col = charset[index][row];
-    int mask = 1 << col;
-    int value = col & mask;
-    return (value != 0);
+    return col;
   }
 
   return 0;
+}
+
+bool LEDMatrix::getBit(char c, int row, int col) {
+  int colValues = getCol(c, row);
+  if (colValues == 0) return 0;
+
+  int mask = 1 << (7-col);
+  int value = colValues & mask;
+  return (value != 0);
 }
