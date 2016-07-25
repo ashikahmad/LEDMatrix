@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <LEDMatrix.h>
 
 unsigned long lastScrollMillis = 0;
 unsigned long scrollInterval = 100;
@@ -12,6 +13,10 @@ const int row[8] = {
 const int col[8] = {
   2, 3, 4, 5, 6, 7, 8, 9
 };
+
+char text[] = "Hello 123! ";
+int textLength = 11;
+LEDMatrix ledMatrix;
 
 #define nChars 6
 #define nRows  8
@@ -98,10 +103,12 @@ void setup() {
 //    digitalWrite(row[thisPin], LOW);
   }
 
+  ledMatrix = LEDMatrix();
+
 }
 
 void loop() {
-  int maxCol = nCols * nChars;
+  int maxCol = nCols * textLength;
 
   unsigned long currentMillis = millis();
   if (currentMillis - lastScrollMillis >= scrollInterval) {
@@ -115,9 +122,10 @@ void loop() {
       int tempCol = thisCol - x;
       if (tempCol < 0) tempCol += maxCol;
       int tempChar = tempCol / nCols;
+      char c = text[tempChar];
       if (tempCol < 0 || tempCol >= maxCol) continue;
       tempCol %= nCols;
-      int thisPixel = pixels[tempChar][thisRow][tempCol];
+      int thisPixel = ledMatrix.getBit(c, thisRow, tempCol); //pixels[tempChar][thisRow][tempCol];
       thisPixel = (thisPixel == 0)? HIGH : LOW;
       digitalWrite(col[thisCol], thisPixel);
     }
