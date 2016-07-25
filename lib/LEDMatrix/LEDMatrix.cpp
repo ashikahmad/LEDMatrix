@@ -243,7 +243,7 @@ static const char charset[][8] = {
       0x00
     },
     {		// 8
-      0x1E,
+      0x0E,
       0x11,
       0x11,
       0x0E,

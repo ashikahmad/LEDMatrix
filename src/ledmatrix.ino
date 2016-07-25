@@ -14,7 +14,7 @@ const int col[8] = {
   2, 3, 4, 5, 6, 7, 8, 9
 };
 
-char text[] = "Ashik uddin Ahmad * 1234567890 WWW";
+char text[] = "\"Ashik uddin Ahmad\" * 1234567890 WWW";
 int textLength = 11;
 LEDMatrix ledMatrix;
 
