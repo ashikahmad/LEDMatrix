@@ -4,12 +4,12 @@
 unsigned long lastScrollMillis = 0;
 unsigned long scrollInterval = 100;
 
-// 2-dimensional array of row pin numbers:
+// Array of row pin numbers:
 int row[8] = {
   10, 11, 12, 13, A0, A1, A2, A3
 };
 
-// 2-dimensional array of column pin numbers:
+// Array of column pin numbers:
 int col[8] = {
   2, 3, 4, 5, 6, 7, 8, 9
 };
