@@ -1,7 +1,9 @@
 #ifndef FONT8X8_H
 #define FONT8X8_H
 
-const char charset[][8] = {
+#include <avr/pgmspace.h>
+
+const uint8_t Font8x8CharSet[][8] PROGMEM = {
     {   // Space
       0x00,
       0x00,

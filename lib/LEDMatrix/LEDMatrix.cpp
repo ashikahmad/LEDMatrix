@@ -31,7 +31,7 @@ void LEDMatrix::setup(int *cols, int *rows, int colNum, int rowNum) {
 int LEDMatrix::getRow(char c, int row) {
   if (c >= ' ' && c <= '~') {
     int index = c - ' ';
-    int col = charset[index][row];
+    int col = pgm_read_byte(&(Font8x8CharSet[index][row]));
     return col;
   }
 

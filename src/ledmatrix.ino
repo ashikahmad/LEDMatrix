@@ -1,3 +1,17 @@
+/*
+
+          C8 C7    C1    C6 C4
+PIN-16->   │  │ R2  │ R4  │  │ R1    <-PIN-9
+          ┌┴──┴──┴──┴──┴──┴──┴──┴──┐
+          │                        │
+          │     1088BS PIN-MAP     │
+          │                        │
+          └┬──┬──┬──┬──┬──┬──┬──┬──┘
+PIN-1 ->  R5 R7  │  │ R8  │ R6 R3    <-PIN-8
+                C2 C3    C5
+
+*/
+
 #include <Arduino.h>
 #include <LEDMatrix.h>
 
