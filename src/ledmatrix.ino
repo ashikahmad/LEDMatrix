@@ -16,11 +16,12 @@ PIN-1 ->  R5 R7  │  │ R8  │ R6 R3    <-PIN-8
 #include <LEDMatrix.h>
 
 unsigned long lastScrollMillis = 0;
-unsigned long scrollInterval = 100;
+unsigned long scrollInterval = 120;
 
 // Array of row pin numbers:
 int row[8] = {
-  10, 11, 12, 13, A0, A1, A2, A3
+  2, 3, 4, 5, 6, 7, 8, 9
+  // 10, 11, 12, 13, A0, A1, A2, A3
 };
 
 // Array of column pin numbers:
@@ -32,7 +33,8 @@ char text[] = "AYAAN AHMED *";
 LEDMatrix ledMatrix = LEDMatrix();
 
 void setup() {
-  ledMatrix.setup(col, row, 8, 8);
+  ledMatrix.setup(row, 8, 10, 13, 12);
+  // ledMatrix.setup(col, row, 8, 8);
   ledMatrix.setText(text, sizeof(text));
   Serial.begin(9600);
 }
